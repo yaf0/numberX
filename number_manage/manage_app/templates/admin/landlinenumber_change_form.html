@@ -1,0 +1,14 @@
+{% extends "admin/change_form.html" %}
+
+{% block form_top %}
+  <div class="submit-row">
+    <div class="label">选择业务：</div>
+    <div class="field-box">
+      {{ adminform.form.business }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block after_field_sets %}
+  {{ block.super }}
+{% endblock %}

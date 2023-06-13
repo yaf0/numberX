@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>网页框架</title>
+    <style>
+        /* 左边导航栏样式 */
+        .sidebar {
+            background-color: #f1f1f1;
+            width: 200px;
+            height: 100vh;
+            float: left;
+        }
+
+        /* 右边内容栏样式 */
+        .content {
+            margin-left: 200px; /* 导航栏宽度 */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <!-- 左边导航栏内容 -->
+        <ul>
+            <li><a href="#customer">客户</a></li>
+            <li><a href="#business">业务</a></li>
+            <li><a href="#mobile">手机号码</a></li>
+            <li><a href="#mobile-allocation">手机号码分配</a></li>
+            <li><a href="#landline-allocation">固话号码分配</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <!-- 右边内容栏内容 -->
+        <div class="tab-content">
+            <!-- 客户 -->
+            <div class="tab-pane" id="customer">
+                <h4 class="control-sidebar-heading">客户</h4>
+                <!-- 客户内容 -->
+            </div>
+
+            <!-- 业务 -->
+            <div class="tab-pane" id="business">
+                <h4 class="control-sidebar-heading">业务</h4>
+                <!-- 业务内容 -->
+            </div>
+
+            <!-- 手机号码 -->
+            <div class="tab-pane" id="mobile">
+                <h4 class="control-sidebar-heading">手机号码</h4>
+                <!-- 手机号码内容 -->
+            </div>
+
+            <!-- 手机号码分配 -->
+            <div class="tab-pane" id="mobile-allocation">
+                <h4 class="control-sidebar-heading">手机号码分配</h4>
+                <!-- 手机号码分配内容 -->
+            </div>
+
+            <!-- 固话号码分配 -->
+            <div class="tab-pane" id="landline-allocation">
+                <h4 class="control-sidebar-heading">固话号码分配</h4>
+                <!-- 固话号码分配内容 -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

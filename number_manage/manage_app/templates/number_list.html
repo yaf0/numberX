@@ -1,0 +1,29 @@
+<!-- my_template.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phone Number List</title>
+</head>
+<body>
+    <h1>Phone Number List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Validity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for number in numbers %}
+            <tr>
+                <td>{{ number.number }}</td>
+                <td>{{ number.type }}</td>
+                <td>{{ number.validity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

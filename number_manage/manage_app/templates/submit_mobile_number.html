@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>手机号码记录提交</title>
+</head>
+<body>
+  <h2>手机号码记录</h2>
+  <form method="POST" action="{% url 'submit_mobile_number' %}">
+    {% csrf_token %}
+    <label for="number">手机号码:</label><br>
+    <input type="text" id="number" name="number" required><br><br>
+    <label for="province">省份:</label><br>
+    <input type="text" id="province" name="province" required><br><br>
+    <label for="area">地区:</label><br>
+    <input type="text" id="area" name="area" required><br><br>
+    <label for="prefix">号码前缀:</label><br>
+    <input type="text" id="prefix" name="prefix"><br><br>
+    <label for="isenabled">是否启用:</label><br>
+    <input type="checkbox" id="isenabled" name="isenabled" checked><br><br>
+    <input type="submit" value="提交">
+  </form>
+</body>
+</html>
