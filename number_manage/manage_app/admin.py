@@ -53,6 +53,16 @@ class PaginatedFilteredSelectMultiple(forms.SelectMultiple):
 
 class CustomLandlineNumberAllocationAdmin(admin.ModelAdmin):
     list_display = ('business', 'isenabled', 'update_time', 'create_time')
+    search_field = ('business')
+    fieldset = (
+        ('Main', {
+            'fields': ('business'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
     filter_horizontal = ('numbers',)
     # formfield_overrides = {
     #     models.ManyToManyField: {'widget': PaginatedFilteredSelectMultiple(verbose_name='', is_stacked=False)},
@@ -80,18 +90,56 @@ class LandlineNumberAllocationAdmin(CustomLandlineNumberAllocationAdmin):
 @admin.register(MobileNumber)
 class MobileNumberAdmin(admin.ModelAdmin):
     list_display = ('number', 'province', 'area', 'prefix', 'isenabled', 'update_time', 'create_time')
-
+    search_fields = ('number', 'province', 'area', 'prefix')
+    fieldsets = (
+        ('Main', {
+            'fields': ('number', 'province', 'area', 'prefix'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('customer_account', 'customer_full_name', 'customer_rate', 'isenabled', 'update_time', 'create_time')
-
+    search_fields = ('customer_account', 'customer_full_name', 'customer_rate')
+    fieldsets = (
+        ('Main', {
+            'fields': ('customer_account', 'customer_full_name', 'customer_rate'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
     list_display = ('customer', 'business_name', 'business_full_name', 'isenabled', 'update_time', 'create_time')
-
+    # 查找报错，TODO
+    # search_fields = ('customer', 'business_name', 'business_full_name')
+    # fieldsets = (
+    #     ('Main', {
+    #         'fields': ('customer', 'business_name', 'business_full_name'),
+    #     }),
+    #     ('Advanced', {
+    #         'classes': ('collapse',),
+    #         'fields': (),
+    #     }),
+    # )
 
 @admin.register(MobileNumberAllocation)
 class MobileNumberAllocationAdmin(admin.ModelAdmin):
     list_display = ('business', 'isenabled', 'update_time', 'create_time')
+    search_field = ('business')
+    fieldset = (
+        ('Main', {
+            'fields': ('business'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
