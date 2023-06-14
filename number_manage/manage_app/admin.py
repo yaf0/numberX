@@ -1,7 +1,30 @@
 from django import forms
 from django.contrib import admin
+from django.db import models
 from .models import Customer, Business, MobileNumber, MobileNumberAllocation, LandlineNumber, LandlineNumberAllocation
 from django.contrib.admin.widgets import FilteredSelectMultiple
+
+
+
+class LandlineNumberAdmin(admin.ModelAdmin):
+    list_display = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
+    search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier')
+    fieldsets = (
+        ('Main', {
+            'fields': ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
+
+
+
+@admin.register(LandlineNumber)
+class LandlineNumberAdmin(LandlineNumberAdmin):
+    pass
+
 
 
 class LandlineNumberAllocationForm(forms.ModelForm):
@@ -11,43 +34,47 @@ class LandlineNumberAllocationForm(forms.ModelForm):
         model = LandlineNumberAllocation
         fields = '__all__'
 
+'''
+class PaginatedFilteredSelectMultiple(forms.SelectMultiple):
+    def __init__(self, verbose_name, is_stacked, attrs=None, choices=()):
+        self.per_page = 10  # 每页显示的选项数量
+        super().__init__(attrs, choices)
 
+    def render(self, name, value, attrs=None, renderer=None):
+        attrs = attrs or {}
+        attrs['class'] = 'selectfilter'
+        output = super().render(name, value, attrs, renderer)
+        return output
 
-
-
+    def value_from_datadict(self, data, files, name):
+        values = super().value_from_datadict(data, files, name)
+        return values[:self.per_page]  # 仅返回每页的选项
+'''
 
 class CustomLandlineNumberAllocationAdmin(admin.ModelAdmin):
     list_display = ('business', 'isenabled', 'update_time', 'create_time')
     filter_horizontal = ('numbers',)
+    # formfield_overrides = {
+    #     models.ManyToManyField: {'widget': PaginatedFilteredSelectMultiple(verbose_name='', is_stacked=False)},
+    # }
 
     def get_form(self, request, obj=None, **kwargs):
         self.form = LandlineNumberAllocationForm
         return super().get_form(request, obj, **kwargs)
 
 
-
-
-class LandlineNumberAdmin(admin.ModelAdmin):
-    list_display = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
-    def allocate_to_business(modeladmin, request, queryset):
-        selected_business = request.POST.get('business')  # 获取所选的业务ID
-        if selected_business:
-            business = Business.objects.get(id=selected_business)
-            for number in queryset:
-                allocation = LandlineNumberAllocation.objects.create(business=business)
-                allocation.numbers.add(number)
-                allocation.save()
-            modeladmin.message_user(request, "固话号码分配成功")
-        else:
-            modeladmin.message_user(request, "请选择一个业务")
-
-    allocate_to_business.short_description = "分配给业务"  # 动作名称
-    actions = [allocate_to_business]  # 将分配给业务的动作添加到动作下拉框中
-
-
-@admin.register(LandlineNumber)
-class LandlineNumberAdmin(LandlineNumberAdmin):
+@admin.register(LandlineNumberAllocation)
+class LandlineNumberAllocationAdmin(CustomLandlineNumberAllocationAdmin):
     pass
+
+
+
+
+
+
+
+
+
 
 
 @admin.register(MobileNumber)
@@ -68,8 +95,3 @@ class BusinessAdmin(admin.ModelAdmin):
 @admin.register(MobileNumberAllocation)
 class MobileNumberAllocationAdmin(admin.ModelAdmin):
     list_display = ('business', 'isenabled', 'update_time', 'create_time')
-
-
-@admin.register(LandlineNumberAllocation)
-class LandlineNumberAllocationAdmin(CustomLandlineNumberAllocationAdmin):
-    pass
