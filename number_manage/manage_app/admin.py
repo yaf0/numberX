@@ -3,28 +3,19 @@ from django.contrib import admin
 from django.db import models
 from .models import Customer, Business, MobileNumber, MobileNumberAllocation, LandlineNumber, LandlineNumberAllocation
 from django.contrib.admin.widgets import FilteredSelectMultiple
-
-
-
-class LandlineNumberAdmin(admin.ModelAdmin):
-    list_display = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
-    search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier')
-    fieldsets = (
-        ('Main', {
-            'fields': ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier'),
-        }),
-        ('Advanced', {
-            'classes': ('collapse',),
-            'fields': (),
-        }),
-    )
-
-
+from django.db.models import Q
 
 @admin.register(LandlineNumber)
-class LandlineNumberAdmin(LandlineNumberAdmin):
-    pass
-
+class LandlineNumberAdmin(admin.ModelAdmin):
+    list_display = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
+    list_filter = ('province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
+    list_per_page = 25
+    search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled')
+    fieldsets = (
+        ('Main', {
+            'fields': ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled'),
+        }),
+    )
 
 
 class LandlineNumberAllocationForm(forms.ModelForm):
