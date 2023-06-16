@@ -2,15 +2,29 @@ from django.db import models
 
 
 from django.db import models
-'''
+
 class AreaCode(models.Model):
-    province = models.CharField(max_length=80)
-    area = models.CharField(max_length=80)
-    code = models.IntegerField(primary_key=True)
+    province = models.CharField(max_length=20, verbose_name='省份')
+    area = models.CharField(max_length=20, verbose_name='地区')
+    code = models.IntegerField(primary_key=True, verbose_name='区号')
 
     def __str__(self):
         return f"AreaCode(province={self.province}, area={self.area}, code={self.code})"
-'''
+    class Meta:
+        managed = True
+        db_table = 'manage_app_area_code'    
+
+class MobilePrefix(models.Model):
+    prefix =  models.CharField(max_length=20, primary_key=True, verbose_name='手机号段')
+    province = models.CharField(max_length=20, verbose_name='省份')
+    area = models.CharField(max_length=20, verbose_name='地区')
+    code = models.IntegerField(verbose_name='区号')
+
+    def __str__(self):
+        return f"AreaCode(province={self.province}, area={self.area}, code={self.code})"
+    class Meta:
+        managed = True
+        db_table = 'manage_app_mobile_prefix'
 
 class Customer(models.Model):
     customer_account = models.CharField(max_length=40, verbose_name='客户账号')
@@ -23,7 +37,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.customer_account
     class Meta:
-        unique_together = [['customer_account', 'customer_rate']]
+        managed = True
+        db_table = 'manage_app_customer'
+        unique_together = (('customer_account', 'customer_rate'),)
         verbose_name = '客户'
         verbose_name_plural = '客户'
 
@@ -44,6 +60,8 @@ class LandlineNumber(models.Model):
     def __str__(self):
         return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
     class Meta:
+        managed = True
+        db_table = 'manage_app_landlinenumber'
         verbose_name = '固话号码'
         verbose_name_plural = '固话号码'
 
@@ -62,6 +80,8 @@ class MobileNumber(models.Model):
     def __str__(self):
         return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
     class Meta:
+        managed = True
+        db_table = 'manage_app_mobilenumber'
         verbose_name = '手机号码'
         verbose_name_plural = '手机号码'
 
@@ -78,7 +98,9 @@ class Business(models.Model):
     def __str__(self):
         return self.business_name
     class Meta:
-        unique_together = [['customer', 'business_name']]
+        managed = True
+        db_table = 'manage_app_business'
+        unique_together = (('customer', 'business_name'),)
         verbose_name = '业务'
         verbose_name_plural = '业务'
 
@@ -95,6 +117,8 @@ class LandlineNumberAllocation(models.Model):
     def __str__(self):
         return self.business.business_name
     class Meta:
+        managed = True
+        db_table = 'manage_app_landlinenumberallocation'
         unique_together = [['business']]
         verbose_name = '固话号码分配'
         verbose_name_plural = '固话号码分配'
@@ -110,6 +134,8 @@ class MobileNumberAllocation(models.Model):
     def __str__(self):
         return self.business.business_name
     class Meta:
+        managed = True
+        db_table = 'manage_app_mobilenumberallocation'
         unique_together = [['business']]
         verbose_name = '手机号码分配'
         verbose_name_plural = '手机号码分配'
