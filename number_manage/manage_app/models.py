@@ -39,7 +39,7 @@ class Customer(models.Model):
         return self.customer_account
     class Meta:
         managed = True
-        db_table = 'manage_app_customer'
+        # db_table = 'manage_app_customer'
         unique_together = (('customer_account', 'customer_rate'),)
         verbose_name = '客户'
         verbose_name_plural = '客户'
@@ -63,7 +63,7 @@ class LandlineNumber(models.Model):
         return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
     class Meta:
         managed = True
-        db_table = 'manage_app_landlinenumber'
+        # db_table = 'manage_app_landlinenumber'
         verbose_name = '固话号码'
         verbose_name_plural = '固话号码'
 
@@ -84,7 +84,7 @@ class MobileNumber(models.Model):
         return f"MobileNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
     class Meta:
         managed = True
-        db_table = 'manage_app_mobilenumber'
+        # db_table = 'manage_app_mobilenumber'
         verbose_name = '手机号码'
         verbose_name_plural = '手机号码'
 
@@ -102,7 +102,7 @@ class Business(models.Model):
         return self.business_name
     class Meta:
         managed = True
-        db_table = 'manage_app_business'
+        # db_table = 'manage_app_business'
         unique_together = (('customer', 'business_name'),)
         verbose_name = '业务'
         verbose_name_plural = '业务'
@@ -121,7 +121,7 @@ class LandlineNumberAllocation(models.Model):
         return self.business.business_name
     class Meta:
         managed = True
-        db_table = 'manage_app_landlinenumberallocation'
+        # db_table = 'manage_app_landlinenumberallocation'
         unique_together = [['business']]
         verbose_name = '固话号码分配'
         verbose_name_plural = '固话号码分配'
@@ -139,7 +139,7 @@ class MobileNumberAllocation(models.Model):
         return self.business.business_name
     class Meta:
         managed = True
-        db_table = 'manage_app_mobilenumberallocation'
+        # db_table = 'manage_app_mobilenumberallocation'
         unique_together = [['business']]
         verbose_name = '手机号码分配'
         verbose_name_plural = '手机号码分配'
