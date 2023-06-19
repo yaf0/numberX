@@ -20,7 +20,7 @@ class MobilePrefix(models.Model):
     code = models.IntegerField(verbose_name='区号')
 
     def __str__(self):
-        return f"AreaCode(province={self.province}, area={self.area}, code={self.code})"
+        return f"MobilePrefix(province={self.province}, area={self.area}, code={self.code})"
     class Meta:
         managed = True
         db_table = 'manage_app_mobile_prefix'
@@ -79,7 +79,7 @@ class MobileNumber(models.Model):
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='下号时间')
     def __str__(self):
-        return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
+        return f"MobileNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
     class Meta:
         managed = True
         db_table = 'manage_app_mobilenumber'
