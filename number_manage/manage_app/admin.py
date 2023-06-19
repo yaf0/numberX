@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.db import models
-from .models import Customer, Business, MobileNumber, MobileNumberAllocation, LandlineNumber, LandlineNumberAllocation
+from .models import Customer, Business, MobileNumber, MobileNumberAllocation, LandlineNumber, LandlineNumberAllocation, AreaCode, MobilePrefix
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.db.models import Q
 
@@ -13,7 +13,7 @@ class LandlineNumberAdmin(admin.ModelAdmin):
     search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled')
     fieldsets = (
         ('Main', {
-            'fields': ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled'),
+            'fields': ('number', 'actual_number', 'supplier', 'isenabled'),
         }),
     )
 
@@ -72,23 +72,13 @@ class LandlineNumberAllocationAdmin(CustomLandlineNumberAllocationAdmin):
 
 
 
-
-
-
-
-
-
 @admin.register(MobileNumber)
 class MobileNumberAdmin(admin.ModelAdmin):
     list_display = ('number', 'province', 'area', 'prefix', 'isenabled', 'update_time', 'create_time')
     search_fields = ('number', 'province', 'area', 'prefix')
     fieldsets = (
         ('Main', {
-            'fields': ('number', 'province', 'area', 'prefix'),
-        }),
-        ('Advanced', {
-            'classes': ('collapse',),
-            'fields': (),
+            'fields': ('number', 'prefix'),
         }),
     )
 
@@ -128,6 +118,34 @@ class MobileNumberAllocationAdmin(admin.ModelAdmin):
     fieldset = (
         ('Main', {
             'fields': ('business'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
+
+@admin.register(AreaCode)
+class AreaCodeAdmin(admin.ModelAdmin):
+    list_display = ('province', 'area', 'code')
+    search_fields = ('province', 'area', 'code')
+    fieldsets = (
+        ('Main', {
+            'fields': ('province', 'area', 'code'),
+        }),
+        ('Advanced', {
+            'classes': ('collapse',),
+            'fields': (),
+        }),
+    )
+
+@admin.register(MobilePrefix)
+class MobilePrefixAdmin(admin.ModelAdmin):
+    list_display = ('prefix', 'province', 'area', 'code', 'carrier')
+    search_fields = ('prefix', 'province', 'area', 'code', 'carrier')
+    fieldsets = (
+        ('Main', {
+            'fields': ('prefix', 'province', 'area', 'code', 'carrier'),
         }),
         ('Advanced', {
             'classes': ('collapse',),

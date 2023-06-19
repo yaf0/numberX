@@ -11,7 +11,7 @@ def get_area_code(number):
     return None
 
 def get_prefix_code(number):
-    match = re.match(r'^1[3-9]\d{5}', number)
+    match = re.match(r'^(1[3-9]\d{5})', number)
     if match:
         return match.group(1)
     return None
@@ -27,7 +27,7 @@ def generate_landline_fields(sender, instance, **kwargs):
             actual_number_area = AreaCode.objects.get(code=actual_number_area_code)
             instance.province = number_area.province
             instance.area = number_area.area
-            instance.area_code = number_area_code
+            instance.area_code = number_area.code
             instance.carrier = actual_number_area.area
         except AreaCode.DoesNotExist:
             pass
@@ -38,9 +38,9 @@ def generate_mobile_fields(sender, instance, **kwargs):
 
     if number_area_code:
         try:
-            number_area = AreaCode.objects.get(code=number_area_code)
+            number_area = MobilePrefix.objects.get(prefix=number_area_code)
             instance.province = number_area.province
             instance.area = number_area.area
-            instance.area_code = number_area_code
+            instance.area_code = number_area.code
         except AreaCode.DoesNotExist:
             pass

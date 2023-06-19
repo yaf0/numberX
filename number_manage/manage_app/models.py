@@ -6,7 +6,7 @@ class AreaCode(models.Model):
     code = models.IntegerField(primary_key=True, verbose_name='区号')
 
     def __str__(self):
-        return f"AreaCode(province={self.province}, area={self.area}, code={self.code})"
+        return self.code
     class Meta:
         managed = True
         db_table = 'manage_app_area_code'    
@@ -17,10 +17,11 @@ class MobilePrefix(models.Model):
     prefix =  models.CharField(max_length=20, primary_key=True, verbose_name='手机号段')
     province = models.CharField(max_length=20, verbose_name='省份')
     area = models.CharField(max_length=20, verbose_name='地区')
+    carrier = models.CharField(max_length=20, verbose_name='运营商')
     code = models.IntegerField(verbose_name='区号')
 
     def __str__(self):
-        return f"MobilePrefix(province={self.province}, area={self.area}, code={self.code})"
+        return self.prefix
     class Meta:
         managed = True
         db_table = 'manage_app_mobile_prefix'
@@ -49,10 +50,10 @@ class LandlineNumber(models.Model):
     number = models.CharField(
         max_length=40, primary_key=True, verbose_name='号码')
     actual_number = models.CharField(max_length=40, verbose_name='实号码')
-    province = models.CharField(max_length=40, verbose_name='省份')
-    area = models.CharField(max_length=40, verbose_name='地区')
+    province = models.CharField(max_length=40, null=True, verbose_name='省份')
+    area = models.CharField(max_length=40, null=True, verbose_name='地区')
     area_code = models.IntegerField(default=None,verbose_name='区号')
-    carrier = models.CharField(max_length=40, verbose_name='运营商')
+    carrier = models.CharField(max_length=40, null=True, verbose_name='运营商')
     supplier = models.CharField(max_length=40, verbose_name='供应商')
     inbound = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, verbose_name='呼入客户')
@@ -60,7 +61,7 @@ class LandlineNumber(models.Model):
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='下号时间')
     def __str__(self):
-        return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
+        return self.number
     class Meta:
         managed = True
         # db_table = 'manage_app_landlinenumber'
@@ -81,7 +82,7 @@ class MobileNumber(models.Model):
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='下号时间')
     def __str__(self):
-        return f"MobileNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
+        return self.number
     class Meta:
         managed = True
         # db_table = 'manage_app_mobilenumber'
