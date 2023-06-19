@@ -1,8 +1,5 @@
 from django.db import models
 
-
-from django.db import models
-
 class AreaCode(models.Model):
     province = models.CharField(max_length=20, verbose_name='省份')
     area = models.CharField(max_length=20, verbose_name='地区')
@@ -13,6 +10,8 @@ class AreaCode(models.Model):
     class Meta:
         managed = True
         db_table = 'manage_app_area_code'    
+        verbose_name = '区号省市'
+        verbose_name_plural = '区号省市'
 
 class MobilePrefix(models.Model):
     prefix =  models.CharField(max_length=20, primary_key=True, verbose_name='手机号段')
@@ -25,6 +24,8 @@ class MobilePrefix(models.Model):
     class Meta:
         managed = True
         db_table = 'manage_app_mobile_prefix'
+        verbose_name = '手机省市'
+        verbose_name_plural = '手机省市'
 
 class Customer(models.Model):
     customer_account = models.CharField(max_length=40, verbose_name='客户账号')
@@ -55,7 +56,7 @@ class LandlineNumber(models.Model):
     inbound = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, verbose_name='呼入客户')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
-    update_time = models.DateTimeField(auto_now=True, verbose_name='最后时间')
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='下号时间')
     def __str__(self):
         return f"LandlineNumber(number={self.number}, inbound={self.inbound} isenabled={self.isenabled}, create_time={self.create_time})"
