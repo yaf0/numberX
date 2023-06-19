@@ -51,6 +51,7 @@ class LandlineNumber(models.Model):
     actual_number = models.CharField(max_length=40, verbose_name='实号码')
     province = models.CharField(max_length=40, verbose_name='省份')
     area = models.CharField(max_length=40, verbose_name='地区')
+    area_code = models.IntegerField(default=None,verbose_name='区号')
     carrier = models.CharField(max_length=40, verbose_name='运营商')
     supplier = models.CharField(max_length=40, verbose_name='供应商')
     inbound = models.ForeignKey(
@@ -72,6 +73,7 @@ class MobileNumber(models.Model):
         max_length=40, primary_key=True, verbose_name='号码')
     province = models.CharField(max_length=40, verbose_name='省份')
     area = models.CharField(max_length=40, verbose_name='地区')
+    area_code = models.IntegerField(default=None,verbose_name='区号')
     prefix = models.CharField(max_length=40, verbose_name='前缀')
     inbound = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, verbose_name='呼入客户')
@@ -111,7 +113,7 @@ class LandlineNumberAllocation(models.Model):
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
 
     numbers = models.ManyToManyField(LandlineNumber, verbose_name='固话号码')
-
+    inbound = models.BooleanField(default=True, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
@@ -129,6 +131,7 @@ class MobileNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
     numbers = models.ManyToManyField(MobileNumber, verbose_name='手机号码')
+    inbound = models.BooleanField(default=True, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
