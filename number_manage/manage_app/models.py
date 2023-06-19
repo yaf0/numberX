@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models 
+from django import forms
 
 class AreaCode(models.Model):
     province = models.CharField(max_length=20, verbose_name='省份')
@@ -108,18 +109,46 @@ class Business(models.Model):
         verbose_name = '业务'
         verbose_name_plural = '业务'
 
+class CustomLandlineNumberField(models.ManyToManyField):
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': CustomLandlineNumberFormField,
+        }
+        defaults.update(kwargs)
+        return super().formfield(**defaults)
+
+class CustomLandlineNumberFormField(forms.ModelMultipleChoiceField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.queryset = self.queryset.filter(inbound__isnull=True)
+
 
 class LandlineNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
 
-    numbers = models.ManyToManyField(LandlineNumber, verbose_name='固话号码')
-    inbound = models.BooleanField(default=True, verbose_name='是否呼入')
+    # numbers = models.ManyToManyField(LandlineNumber, verbose_name='固话号码')
+    numbers = CustomLandlineNumberField(LandlineNumber, verbose_name='固话号码')
+    inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     def __str__(self):
         return self.business.business_name
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.inbound:
+            # 获取业务对应的客户
+            customer = self.business.customer
+
+            # 更新固话号码的inbound字段
+            for number in self.numbers.all():
+                if not number.inbound:
+                    number.inbound = customer.customer_account
+                    number.save()
+                else:
+                    raise Exception("存在呼入已分配的号码")
     class Meta:
         managed = True
         # db_table = 'manage_app_landlinenumberallocation'
@@ -132,7 +161,7 @@ class MobileNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
     numbers = models.ManyToManyField(MobileNumber, verbose_name='手机号码')
-    inbound = models.BooleanField(default=True, verbose_name='是否呼入')
+    inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')

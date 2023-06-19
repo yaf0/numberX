@@ -7,7 +7,7 @@ from django.db.models import Q
 
 @admin.register(LandlineNumber)
 class LandlineNumberAdmin(admin.ModelAdmin):
-    list_display = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
+    list_display = ('number', 'actual_number', 'inbound', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
     list_filter = ('province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
     list_per_page = 25
     search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled')
@@ -74,7 +74,7 @@ class LandlineNumberAllocationAdmin(CustomLandlineNumberAllocationAdmin):
 
 @admin.register(MobileNumber)
 class MobileNumberAdmin(admin.ModelAdmin):
-    list_display = ('number', 'province', 'area', 'prefix', 'isenabled', 'update_time', 'create_time')
+    list_display = ('number', 'province', 'area', 'prefix', 'inbound', 'isenabled', 'update_time', 'create_time')
     search_fields = ('number', 'province', 'area', 'prefix')
     fieldsets = (
         ('Main', {
