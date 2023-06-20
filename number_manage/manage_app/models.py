@@ -138,9 +138,10 @@ class LandlineNumberAllocation(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        if self.inbound:
-            # 获取业务对应的客户
-            customer = self.business.customer
+        # 获取业务对应的客户
+        customer = self.business.customer
+
+        if self.inbound:    
 
             # 更新固话号码的inbound字段
             for number in self.numbers.all():
@@ -149,6 +150,11 @@ class LandlineNumberAllocation(models.Model):
                     number.save()
                 else:
                     raise Exception("存在呼入已分配的号码")
+        else:
+            for number in self.numbers.all():
+                if number.inbound == customer.customer_account:
+                    number.inbound = None
+
     class Meta:
         managed = True
         # db_table = 'manage_app_landlinenumberallocation'
