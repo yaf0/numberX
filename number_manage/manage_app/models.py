@@ -144,7 +144,7 @@ class LandlineNumberAllocation(models.Model):
 
             # 更新固话号码的inbound字段
             for number in self.numbers.all():
-                if not number.inbound:
+                if number.inbound == None:
                     number.inbound = customer.customer_account
                     number.save()
                 else:
