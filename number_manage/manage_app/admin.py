@@ -8,7 +8,7 @@ from django.db.models import Q
 @admin.register(LandlineNumber)
 class LandlineNumberAdmin(admin.ModelAdmin):
     list_display = ('number', 'actual_number', 'inbound', 'province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
-    list_filter = ('province', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
+    list_filter = ('province', 'inbound', 'area', 'carrier', 'supplier', 'isenabled', 'update_time', 'create_time')
     list_per_page = 25
     search_fields = ('number', 'actual_number', 'province', 'area', 'carrier', 'supplier', 'isenabled')
     fieldsets = (
@@ -43,7 +43,7 @@ class PaginatedFilteredSelectMultiple(forms.SelectMultiple):
 '''
 
 class CustomLandlineNumberAllocationAdmin(admin.ModelAdmin):
-    list_display = ('business', 'isenabled', 'update_time', 'create_time')
+    list_display = ('business', 'inbound', 'isenabled', 'update_time', 'create_time')
     search_field = ('business')
     fieldset = (
         ('Main', {

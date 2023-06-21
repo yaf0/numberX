@@ -1,6 +1,30 @@
 from django.db import models 
 from django import forms
 
+class Supplier(models.Model):
+    supplier = models.CharField(max_length=40, verbose_name='供应商')
+    customer_full_name = models.CharField(
+        max_length=80, null=True, verbose_name='全名/备注')
+    supplier_rate = models.FloatField(null=True, verbose_name='结算费率')
+    concurrency = models.FloatField(null=True, verbose_name='线路并发')
+    caps = models.FloatField(null=True, verbose_name='CAPS')
+    supplier_ip = models.CharField(max_length=40, null=True, verbose_name='IP')
+    supplier_port = models.CharField(max_length=40, null=True, verbose_name='端口')
+    supplier_ip2 = models.CharField(max_length=40, null=True, verbose_name='IP2')
+    supplier_ip2_port = models.CharField(max_length=40, null=True, verbose_name='IP2端口')
+    isenabled = models.BooleanField(default=True, verbose_name='是否启用')
+    update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
+    create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
+    def __str__(self):
+        return self.supplier
+    class Meta:
+        managed = True
+        # db_table = 'manage_app_customer'
+        unique_together = (('supplier', 'supplier_rate'),)
+        verbose_name = '客户'
+        verbose_name_plural = '客户'
+
+
 class AreaCode(models.Model):
     province = models.CharField(max_length=20, verbose_name='省份')
     area = models.CharField(max_length=20, verbose_name='地区')
@@ -47,6 +71,8 @@ class Customer(models.Model):
         verbose_name_plural = '客户'
 
 
+
+
 class LandlineNumber(models.Model):
     number = models.CharField(
         max_length=40, primary_key=True, verbose_name='号码')
@@ -55,7 +81,8 @@ class LandlineNumber(models.Model):
     area = models.CharField(max_length=40, null=True, verbose_name='地区')
     area_code = models.IntegerField(default=None,verbose_name='区号')
     carrier = models.CharField(max_length=40, null=True, verbose_name='运营商')
-    supplier = models.CharField(max_length=40, verbose_name='供应商')
+    supplier = models.ForeignKey(
+        Supplier, on_delete=models.DO_NOTHING, verbose_name='供应商')
     inbound = models.ForeignKey(
         Customer, on_delete=models.SET_NULL, null=True, verbose_name='呼入客户')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
@@ -122,12 +149,10 @@ class CustomLandlineNumberFormField(forms.ModelMultipleChoiceField):
         super().__init__(*args, **kwargs)
         self.queryset = self.queryset.filter(inbound__isnull=True)
 
-
 class LandlineNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
 
-    # numbers = models.ManyToManyField(LandlineNumber, verbose_name='固话号码')
     numbers = CustomLandlineNumberField(LandlineNumber, verbose_name='固话号码')
     inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
@@ -146,13 +171,13 @@ class LandlineNumberAllocation(models.Model):
             # 更新固话号码的inbound字段
             for number in self.numbers.all():
                 if number.inbound == None:
-                    number.inbound = customer.customer_account
+                    number.inbound = customer
                     number.save()
                 else:
                     raise Exception("存在呼入已分配的号码")
         else:
             for number in self.numbers.all():
-                if number.inbound == customer.customer_account:
+                if number.inbound == customer:
                     number.inbound = None
 
     class Meta:
@@ -162,6 +187,15 @@ class LandlineNumberAllocation(models.Model):
         verbose_name = '固话号码分配'
         verbose_name_plural = '固话号码分配'
 
+#class LandlineNumberAllocationForm(forms.ModelForm):
+#    numbers = forms.ModelChoiceField(
+#        queryset=LandlineNumber.objects.filter(inbound__isnull=True),
+#        widget=forms.CheckboxSelectMultiple
+#    )
+#    
+#    class Meta:
+#        model = LandlineNumberAllocation
+#        fields = ['business', 'numbers', 'inbound', 'isenabled']
 
 class MobileNumberAllocation(models.Model):
     business = models.ForeignKey(
