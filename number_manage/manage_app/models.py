@@ -3,7 +3,7 @@ from django import forms
 
 class Supplier(models.Model):
     supplier = models.CharField(max_length=40, verbose_name='供应商')
-    customer_full_name = models.CharField(
+    supplier_full_name = models.CharField(
         max_length=80, null=True, verbose_name='全名/备注')
     supplier_rate = models.FloatField(null=True, verbose_name='结算费率')
     concurrency = models.FloatField(null=True, verbose_name='线路并发')
@@ -21,8 +21,8 @@ class Supplier(models.Model):
         managed = True
         # db_table = 'manage_app_customer'
         unique_together = (('supplier', 'supplier_rate'),)
-        verbose_name = '客户'
-        verbose_name_plural = '客户'
+        verbose_name = '供应商'
+        verbose_name_plural = '供应商'
 
 
 class AreaCode(models.Model):
@@ -35,14 +35,14 @@ class AreaCode(models.Model):
     class Meta:
         managed = True
         db_table = 'manage_app_area_code'    
-        verbose_name = '区号省市'
-        verbose_name_plural = '区号省市'
+        verbose_name = '区号省市查询表'
+        verbose_name_plural = '区号省市查询表'
 
 class MobilePrefix(models.Model):
     prefix =  models.CharField(max_length=20, primary_key=True, verbose_name='手机号段')
     province = models.CharField(max_length=20, verbose_name='省份')
     area = models.CharField(max_length=20, verbose_name='地区')
-    carrier = models.CharField(max_length=20, verbose_name='运营商')
+    carrier = models.CharField(max_length=20, null=True, verbose_name='运营商')
     code = models.IntegerField(verbose_name='区号')
 
     def __str__(self):
@@ -50,8 +50,8 @@ class MobilePrefix(models.Model):
     class Meta:
         managed = True
         db_table = 'manage_app_mobile_prefix'
-        verbose_name = '手机省市'
-        verbose_name_plural = '手机省市'
+        verbose_name = '手机省市查询表'
+        verbose_name_plural = '手机省市查询表'
 
 class Customer(models.Model):
     customer_account = models.CharField(max_length=40, verbose_name='客户账号')
@@ -82,9 +82,9 @@ class LandlineNumber(models.Model):
     area_code = models.IntegerField(default=None,verbose_name='区号')
     carrier = models.CharField(max_length=40, null=True, verbose_name='运营商')
     supplier = models.ForeignKey(
-        Supplier, on_delete=models.DO_NOTHING, verbose_name='供应商')
+        Supplier, null=True, on_delete=models.DO_NOTHING, verbose_name='供应商')
     inbound = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True, verbose_name='呼入客户')
+        Customer, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='呼入客户')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='下号时间')
@@ -153,32 +153,15 @@ class LandlineNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
 
-    numbers = CustomLandlineNumberField(LandlineNumber, verbose_name='固话号码')
+    numbers = CustomLandlineNumberField(LandlineNumber, blank=True, verbose_name='固话号码')
     inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True,verbose_name='创建时间')
     def __str__(self):
         return self.business.business_name
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
 
-        # 获取业务对应的客户
-        customer = self.business.customer
-
-        if self.inbound:    
-
-            # 更新固话号码的inbound字段
-            for number in self.numbers.all():
-                if number.inbound == None:
-                    number.inbound = customer
-                    number.save()
-                else:
-                    raise Exception("存在呼入已分配的号码")
-        else:
-            for number in self.numbers.all():
-                if number.inbound == customer:
-                    number.inbound = None
+    
 
     class Meta:
         managed = True
@@ -200,7 +183,7 @@ class LandlineNumberAllocation(models.Model):
 class MobileNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
-    numbers = models.ManyToManyField(MobileNumber, verbose_name='手机号码')
+    numbers = models.ManyToManyField(MobileNumber, blank=True, verbose_name='手机号码')
     inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
