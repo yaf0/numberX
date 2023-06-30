@@ -52,7 +52,7 @@ def generate_mobile_fields(sender, instance, **kwargs):
 @receiver(post_save, sender=LandlineNumberAllocation)
 def update_landline_numbers(sender, instance, **kwargs):
     # 获取业务对应的客户
-    customer = instance.business.customer
+    customer = instance
     logging.debug(f'customer字段值为{customer}')
     if instance.inbound:
         logging.debug(f'instance.inbound字段值为{instance.inbound}')

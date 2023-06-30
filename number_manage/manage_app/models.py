@@ -84,7 +84,7 @@ class LandlineNumber(models.Model):
     supplier = models.ForeignKey(
         Supplier, null=True, on_delete=models.DO_NOTHING, verbose_name='供应商')
     inbound = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='呼入客户')
+        'LandlineNumberAllocation', on_delete=models.SET_NULL, blank=True, null=True, verbose_name='呼入客户')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='下号时间')
@@ -148,12 +148,13 @@ class CustomLandlineNumberFormField(forms.ModelMultipleChoiceField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.queryset = self.queryset.filter(inbound__isnull=True)
+        # self.queryset = self.queryset.exclude(inbound=super)
 
 class LandlineNumberAllocation(models.Model):
     business = models.ForeignKey(
         Business, on_delete=models.CASCADE, verbose_name='客户-业务')
 
-    numbers = CustomLandlineNumberField(LandlineNumber, blank=True, verbose_name='固话号码')
+    numbers = CustomLandlineNumberField('LandlineNumber', blank=True, verbose_name='固话号码')
     inbound = models.BooleanField(default=False, verbose_name='是否呼入')
     isenabled = models.BooleanField(default=True, verbose_name='是否启用')
     update_time = models.DateTimeField(auto_now=True,verbose_name='更新时间')
